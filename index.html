@@ -58,20 +58,31 @@ button{cursor:pointer}
 .auth-switch-text span{color:var(--green);cursor:pointer;font-weight:600}
 
 .app-header{text-align:center;font-weight:bold;font-size:1.2rem;padding:16px;letter-spacing:1px;color:#f8fafc}
+
+/* Slider Customization */
 .slider-container{
-  height:160px;border-radius:16px;overflow:hidden;position:relative;margin-bottom:18px;
+  height:170px;border-radius:16px;overflow:hidden;position:relative;margin-bottom:18px;
   box-shadow:0 8px 20px rgba(0,0,0,0.4);border:1px solid var(--border);
 }
 .slide{
   position:absolute;width:100%;height:100%;opacity:0;
-  transition:opacity 0.8s ease-in-out;background-size:cover;background-position:center;
-  display:flex;align-items:flex-end;padding:15px;
+  transition:opacity 0.6s ease-in-out;background-size:cover;background-position:center;
+  display:flex;align-items:flex-end;padding:15px;visibility:hidden;
 }
+.slide.active{opacity:1;visibility:visible}
 .slide::after{
   content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.8),transparent 60%);
 }
-.slide.active{opacity:1}
 .slide-caption{position:relative;z-index:2;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);padding:4px 12px;border-radius:6px;font-size:0.8rem;border:1px solid rgba(255,255,255,0.1)}
+
+/* Slider Dots for Manual Control */
+.slider-dots{
+  position:absolute;bottom:10px;right:15px;display:flex;gap:6px;z-index:10;
+}
+.dot{
+  width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.4);cursor:pointer;transition:0.3s;
+}
+.dot.active{background:var(--green);width:20px;border-radius:4px;}
 
 .user-card{
   background:linear-gradient(135deg,#121824,#0d111a);border:1px solid var(--border);border-radius:16px;
@@ -116,7 +127,7 @@ button{cursor:pointer}
   transition:0.2s;
 }
 .product-card:hover{border-color:rgba(0,230,118,0.4)}
-.product-img-box{width:65px;height:65px;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.product-img-box{width:65px;height:65px;border-radius:10px;overflow:hidden;border:1px solid var(--border);flex-shrink:0;}
 .product-img-box img{width:100%;height:100%;object-fit:cover}
 .product-details{flex:1;padding:0 12px}
 .product-title{font-size:0.88rem;font-weight:600;color:#f8fafc}
@@ -209,7 +220,7 @@ button{cursor:pointer}
 .nav-item span:last-child{font-weight:500}
 
 .modal{
-  display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);
   z-index:2000;align-items:center;justify-content:center;backdrop-filter:blur(5px);
 }
 .modal.active{display:flex}
@@ -272,7 +283,8 @@ button{cursor:pointer}
 <div id="view-home" class="view active">
 <div class="app-header">CENTRO COMERCIAL</div>
 
-<div class="slider-container">
+<!-- Interactive Slider with Dots -->
+<div class="slider-container" id="main-slider">
   <div class="slide active" style="background-image:url('https://images.unsplash.com/photo-1483985988355-763728e1935b?w=900')">
     <div class="slide-caption">عروض الموضة والأزياء الكبرى</div>
   </div>
@@ -281,6 +293,11 @@ button{cursor:pointer}
   </div>
   <div class="slide" style="background-image:url('https://images.unsplash.com/photo-1555529771-835f59fc5efe?w=900')">
     <div class="slide-caption">تجربة تسوق فاخرة ومتكاملة</div>
+  </div>
+  <div class="slider-dots">
+    <span class="dot active" onclick="currentSlide(0)"></span>
+    <span class="dot" onclick="currentSlide(1)"></span>
+    <span class="dot" onclick="currentSlide(2)"></span>
   </div>
 </div>
 
@@ -322,7 +339,7 @@ button{cursor:pointer}
 <div class="products-list">
   <div class="product-card">
     <div class="product-img-box">
-      <img src="https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=300">
+      <img src="https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=300" alt="product">
     </div>
     <div class="product-details">
       <div class="product-title">كيبل شحن سريع Type-C قماشي متين</div>
@@ -333,7 +350,7 @@ button{cursor:pointer}
 
   <div class="product-card">
     <div class="product-img-box">
-      <img src="https://images.unsplash.com/photo-1601593346740-925623e07925?w=300">
+      <img src="https://images.unsplash.com/photo-1601593346740-925623e07925?w=300" alt="product">
     </div>
     <div class="product-details">
       <div class="product-title">جراب حماية شفاف سيليكون أنيق</div>
@@ -344,13 +361,36 @@ button{cursor:pointer}
 
   <div class="product-card">
     <div class="product-img-box">
-      <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=300">
+      <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=300" alt="product">
     </div>
     <div class="product-details">
       <div class="product-title">ساعة ذكية رياضية بشاشة HD متطورة</div>
       <div class="product-info-row">المبيعات: 4,890</div>
     </div>
     <div class="product-price">75 EGP</div>
+  </div>
+
+  <!-- Added Products -->
+  <div class="product-card">
+    <div class="product-img-box">
+      <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300" alt="product">
+    </div>
+    <div class="product-details">
+      <div class="product-title">سماعات رأس لاسلكية عازلة للضوضاء</div>
+      <div class="product-info-row">المبيعات: 3,920</div>
+    </div>
+    <div class="product-price">120 EGP</div>
+  </div>
+
+  <div class="product-card">
+    <div class="product-img-box">
+      <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf80?w=300" alt="product">
+    </div>
+    <div class="product-details">
+      <div class="product-title">ساعة يد رجالية كلاسيكية فاخرة</div>
+      <div class="product-info-row">المبيعات: 2,750</div>
+    </div>
+    <div class="product-price">150 EGP</div>
   </div>
 </div>
 </div>
@@ -360,7 +400,7 @@ button{cursor:pointer}
 <h3 style="margin-bottom:14px;font-size:1.1rem">قائمة الاشتراكات والمهام</h3>
 <div class="vip-grid">
   <div class="vip-card" id="vip-card-170" onclick="subscribeVip(170,3.6,10)">
-    <img class="vip-img" src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=500">
+    <img class="vip-img" src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=500" alt="vip">
     <div class="vip-body">
       <div class="vip-limit">الباقة الأساسية</div>
       <div class="vip-price">170 EGP</div>
@@ -369,7 +409,7 @@ button{cursor:pointer}
   </div>
 
   <div class="vip-card" id="vip-card-200" onclick="subscribeVip(200,5.4,10)">
-    <img class="vip-img" src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=500">
+    <img class="vip-img" src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=500" alt="vip">
     <div class="vip-body">
       <div class="vip-limit">باقة النخبة</div>
       <div class="vip-price">200 EGP</div>
@@ -377,8 +417,9 @@ button{cursor:pointer}
     </div>
   </div>
 
+  <!-- Updated 500 EGP VIP Card with professional image -->
   <div class="vip-card" id="vip-card-500" onclick="subscribeVip(500,6.6,10)">
-    <img class="vip-img" src="https://images.unsplash.com/photo-1523275335684-37898b6baf80?w=500">
+    <img class="vip-img" src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=500" alt="vip">
     <div class="vip-body">
       <div class="vip-limit">الباقة الفضية</div>
       <div class="vip-price">500 EGP</div>
@@ -387,7 +428,7 @@ button{cursor:pointer}
   </div>
 
   <div class="vip-card" id="vip-card-1000" onclick="subscribeVip(1000,7.2,10)">
-    <img class="vip-img" src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500">
+    <img class="vip-img" src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500" alt="vip">
     <div class="vip-body">
       <div class="vip-limit">الباقة الذهبية</div>
       <div class="vip-price">1000 EGP</div>
@@ -396,7 +437,7 @@ button{cursor:pointer}
   </div>
 
   <div class="vip-card" id="vip-card-3000" onclick="subscribeVip(3000,8.5,10)">
-    <img class="vip-img" src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=500">
+    <img class="vip-img" src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=500" alt="vip">
     <div class="vip-body">
       <div class="vip-limit">الباقة البلاتينية</div>
       <div class="vip-price">3000 EGP</div>
@@ -405,7 +446,7 @@ button{cursor:pointer}
   </div>
 
   <div class="vip-card" id="vip-card-5000" onclick="subscribeVip(5000,10,10)">
-    <img class="vip-img" src="https://images.unsplash.com/photo-1490578474895-699cd4e2cf59?w=500">
+    <img class="vip-img" src="https://images.unsplash.com/photo-1490578474895-699cd4e2cf59?w=500" alt="vip">
     <div class="vip-body">
       <div class="vip-limit">الباقة الماسية</div>
       <div class="vip-price">5000 EGP</div>
@@ -546,7 +587,6 @@ window.handleAuth=async function(e){
   const phone=document.getElementById("auth-phone").value.trim();
   const pass=document.getElementById("auth-pass").value.trim();
 
-  // التحقق من أن رقم الهاتف يتكون من 11 رقم بالضبط وأنه أرقام فقط
   if(!/^\d{11}$/.test(phone)){
     alert("الرجاء إدخال رقم هاتف صحيح مكون من 11 رقماً");
     return;
@@ -866,14 +906,38 @@ window.logout=function(){
   location.reload();
 };
 
-let slide=0;
-setInterval(()=>{
+/* Interactive Slider Logic with Manual Control */
+let currentSlideIndex=0;
+let slideInterval;
+
+function showSlide(index){
   const slides=document.querySelectorAll(".slide");
-  if(!slides.length)return;
+  const dots=document.querySelectorAll(".dot");
+  if(!slides.length) return;
+  
   slides.forEach(s=>s.classList.remove("active"));
-  slide=(slide+1)%slides.length;
-  slides[slide].classList.add("active");
-},4000);
+  dots.forEach(d=>d.classList.remove("active"));
+  
+  currentSlideIndex=(index + slides.length)%slides.length;
+  slides[currentSlideIndex].classList.add("active");
+  dots[currentSlideIndex].classList.add("active");
+}
+
+window.currentSlide=function(index){
+  clearInterval(slideInterval);
+  showSlide(index);
+  startSlider();
+}
+
+function startSlider(){
+  slideInterval=setInterval(()=>{
+    showSlide(currentSlideIndex+1);
+  },4000);
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
+  startSlider();
+});
 </script>
 
 </body>

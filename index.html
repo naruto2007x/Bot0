@@ -236,7 +236,7 @@ button{cursor:pointer}
 
 <body>
 
-<!-- AUTH VIEW (مسار تسجيل الدخول وإنشاء الحساب) -->
+<!-- AUTH VIEW -->
 <div id="view-auth" class="view active">
   <div class="auth-wrapper">
     <div class="auth-hero">
@@ -277,7 +277,7 @@ button{cursor:pointer}
   </div>
 </div>
 
-<!-- MAIN APP CONTENT (مخفي بالكامل ولا يظهر إلا بعد تسجيل الدخول) -->
+<!-- MAIN APP CONTENT -->
 <div id="app-content" style="display:none">
 <div style="padding:14px">
 
@@ -285,7 +285,6 @@ button{cursor:pointer}
 <div id="view-home" class="view active">
 <div class="app-header">CENTRO COMERCIAL</div>
 
-<!-- Interactive Slider with Dots -->
 <div class="slider-container" id="main-slider">
   <div class="slide active" style="background-image:url('https://images.unsplash.com/photo-1483985988355-763728e1935b?w=900')">
     <div class="slide-caption">عروض الموضة والأزياء الكبرى</div>
@@ -350,7 +349,6 @@ button{cursor:pointer}
     <div class="product-price">50 EGP</div>
   </div>
 
-  <!-- منتج الـ 65 EGP تم إصلاح وتحديث الصورة لتكون سليمة -->
   <div class="product-card">
     <div class="product-img-box">
       <img src="https://images.unsplash.com/photo-1585060544812-6b45742d762f?w=300" alt="product">
@@ -384,7 +382,6 @@ button{cursor:pointer}
     <div class="product-price">120 EGP</div>
   </div>
 
-  <!-- منتج الـ 150 EGP تم إصلاح وتحديث الصورة لتكون سليمة -->
   <div class="product-card">
     <div class="product-img-box">
       <img src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=300" alt="product">
@@ -498,7 +495,7 @@ button{cursor:pointer}
 </div>
 </div>
 
-<!-- NAV BAR (مخفي ولا يظهر إلا بعد تسجيل الدخول) -->
+<!-- NAV BAR -->
 <div class="navbar" id="app-navbar">
 <div class="nav-item active" onclick="switchTab('home',this)">
   🏠<span>الرئيسية</span>
@@ -690,7 +687,6 @@ window.addEventListener("DOMContentLoaded",()=>{
 });
 
 function initAppSession(phone){
-  // إخفاء واجهة الدخول وإظهار التطبيق والنافبار السفلي
   document.getElementById("view-auth").style.display="none";
   document.getElementById("app-content").style.display="block";
   document.getElementById("app-navbar").classList.add("active");
@@ -727,9 +723,11 @@ function updateVipCards(){
   const cards=[["vip-card-170",170],["vip-card-200",200],["vip-card-500",500],["vip-card-1000",1000],["vip-card-3000",3000],["vip-card-5000",5000]];
   const balance=Number(currentUserData?.balance||0);
   const active=currentUserData?.activeSubscription && !currentUserData.activeSubscription.completed;
+  
   cards.forEach(([id,price])=>{
     const el=document.getElementById(id);
     if(!el)return;
+    // يتم تعطيل الباقة فقط إذا كان رصيد المستخدم أقل من سعر الباقة (كشرط أهليات بدون خصم) أو إذا لديه باقة نشطة أخرى
     el.classList.toggle("disabled",active||balance<price);
   });
 }
@@ -743,23 +741,37 @@ window.subscribeVip=async function(amount,commission,tasksCount){
   }
   const balance=Number(currentUserData.balance||0);
   const price=Number(amount);
+
   if(balance<price){
-    alert(`الرصيد غير كافٍ.\n\nسعر الباقة: ${price.toFixed(2)} EGP\nرصيدك: ${balance.toFixed(2)} EGP\nالمطلوب: ${(price-balance).toFixed(2)} EGP`);
+    alert(`الرصيد غير كافٍ لفتح هذه الباقة.\n\nالمطلوب كحد أدنى في الرصيد: ${price.toFixed(2)} EGP\nرصيدك الحالي: ${balance.toFixed(2)} EGP\n\n(ملاحظة: لن يتم خصم المبلغ من رصيدك)`);
     return;
   }
-  const sub={amount:price,commission:Number(commission),tasksCount:Number(tasksCount),currentTask:1,completed:false};
-  const newBalance=balance-price;
+
+  const sub={
+    amount:price,
+    commission:Number(commission),
+    tasksCount:Number(tasksCount),
+    currentTask:1,
+    completed:false
+  };
+
+  // تم إلغاء خصم السعر من الرصيد (balance لم يتم طرح price منه)، ليفضل رصيد المستخدم كاملاً كما هو
   try{
-    await window.updateDoc(window.doc(window.db,"users",currentUserData.phone),{balance:newBalance,activeSubscription:sub});
-    currentUserData.balance=newBalance;
+    await window.updateDoc(window.doc(window.db,"users",currentUserData.phone),{
+      activeSubscription:sub
+    });
+
     currentUserData.activeSubscription=sub;
     hasActiveSubscription=sub;
-    updateBalanceUI(newBalance);
+    
+    updateBalanceUI(currentUserData.balance);
     updateVipCards();
+
+    alert(`✅ تم تفعيل الباقة بنجاح!\nملاحظة: ظل رصيدك سليماً ولم يتم خصم قيمة الباقة منه.`);
     switchTab("transactions",document.querySelectorAll(".nav-item")[2]);
   }catch(e){
     console.error(e);
-    alert("حدث خطأ أثناء إنشاء الاشتراك.");
+    alert("حدث خطأ أثناء تفعيل الاشتراك.");
   }
 };
 
@@ -772,7 +784,7 @@ function renderTransactions(){
   }
   box.innerHTML=`
   <div class="tx-hero-card">
-    <div class="tx-balance-title">الرصيد الحالي</div>
+    <div class="tx-balance-title">الرصيد الحالي (بدون خصم)</div>
     <div class="tx-balance-val">${Number(currentUserData.balance||0).toFixed(2)} EGP</div>
     <div class="tx-commission-box">
       <span class="tx-commission-title">عمولة الباقة النشطة</span>
@@ -781,7 +793,7 @@ function renderTransactions(){
   </div>
   <div class="tx-task-card">
     <div class="tx-task-row">
-      <span class="tx-task-label">قيمة الباقة:</span>
+      <span class="tx-task-label">الباقة المفعلة:</span>
       <span class="tx-task-value">${sub.amount} EGP</span>
     </div>
     <div class="tx-task-row">
@@ -911,7 +923,6 @@ window.logout=function(){
   location.reload();
 };
 
-/* Interactive Slider Logic with Manual Control */
 let currentSlideIndex=0;
 let slideInterval;
 

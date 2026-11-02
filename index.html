@@ -21,6 +21,7 @@ button{cursor:pointer}
 .view{display:none}
 .view.active{display:block}
 
+/* Authentication Layout */
 .auth-wrapper{min-height:100vh;background:var(--bg);display:flex;flex-direction:column;justify-content:center}
 .auth-hero{
   padding:30px 20px;
@@ -57,9 +58,9 @@ button{cursor:pointer}
 .auth-switch-text{text-align:center;margin-top:22px;color:var(--sub);font-size:0.85rem}
 .auth-switch-text span{color:var(--green);cursor:pointer;font-weight:600}
 
+/* App Layout */
 .app-header{text-align:center;font-weight:bold;font-size:1.2rem;padding:16px;letter-spacing:1px;color:#f8fafc}
 
-/* Slider Customization */
 .slider-container{
   height:170px;border-radius:16px;overflow:hidden;position:relative;margin-bottom:18px;
   box-shadow:0 8px 20px rgba(0,0,0,0.4);border:1px solid var(--border);
@@ -75,7 +76,6 @@ button{cursor:pointer}
 }
 .slide-caption{position:relative;z-index:2;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);padding:4px 12px;border-radius:6px;font-size:0.8rem;border:1px solid rgba(255,255,255,0.1)}
 
-/* Slider Dots for Manual Control */
 .slider-dots{
   position:absolute;bottom:10px;right:15px;display:flex;gap:6px;z-index:10;
 }
@@ -127,7 +127,7 @@ button{cursor:pointer}
   transition:0.2s;
 }
 .product-card:hover{border-color:rgba(0,230,118,0.4)}
-.product-img-box{width:65px;height:65px;border-radius:10px;overflow:hidden;border:1px solid var(--border);flex-shrink:0;}
+.product-img-box{width:65px;height:65px;border-radius:10px;overflow:hidden;border:1px solid var(--border);flex-shrink:0;background:#1a2230}
 .product-img-box img{width:100%;height:100%;object-fit:cover}
 .product-details{flex:1;padding:0 12px}
 .product-title{font-size:0.88rem;font-weight:600;color:#f8fafc}
@@ -141,7 +141,7 @@ button{cursor:pointer}
 }
 .vip-card:hover{border-color:rgba(0,230,118,0.5)}
 .vip-card.disabled{opacity:0.4;cursor:not-allowed}
-.vip-img{width:100%;height:110px;object-fit:cover}
+.vip-img{width:100%;height:110px;object-fit:cover;background:#1a2230}
 .vip-body{padding:10px}
 .vip-limit{font-size:0.75rem;color:var(--sub)}
 .vip-price{font-weight:bold;margin:4px 0;font-size:1.05rem;color:#f8fafc}
@@ -210,8 +210,10 @@ button{cursor:pointer}
   position:fixed;bottom:0;left:0;right:0;height:65px;
   background:rgba(12, 17, 26, 0.95);backdrop-filter:blur(10px);display:flex;
   justify-content:space-around;align-items:center;
-  border-top:1px solid var(--border);z-index:1000;
+  border-top:1px solid var(--border);z-index:1000;display:none;
 }
+.navbar.active{display:flex}
+
 .nav-item{
   display:flex;flex-direction:column;align-items:center;
   color:var(--sub);font-size:0.72rem;gap:4px;flex:1;cursor:pointer;transition:0.2s;
@@ -234,7 +236,7 @@ button{cursor:pointer}
 
 <body>
 
-<!-- AUTH VIEW -->
+<!-- AUTH VIEW (مسار تسجيل الدخول وإنشاء الحساب) -->
 <div id="view-auth" class="view active">
   <div class="auth-wrapper">
     <div class="auth-hero">
@@ -275,7 +277,7 @@ button{cursor:pointer}
   </div>
 </div>
 
-<!-- MAIN APP VIEW -->
+<!-- MAIN APP CONTENT (مخفي بالكامل ولا يظهر إلا بعد تسجيل الدخول) -->
 <div id="app-content" style="display:none">
 <div style="padding:14px">
 
@@ -348,9 +350,10 @@ button{cursor:pointer}
     <div class="product-price">50 EGP</div>
   </div>
 
+  <!-- منتج الـ 65 EGP تم إصلاح وتحديث الصورة لتكون سليمة -->
   <div class="product-card">
     <div class="product-img-box">
-      <img src="https://images.unsplash.com/photo-1601593346740-925623e07925?w=300" alt="product">
+      <img src="https://images.unsplash.com/photo-1585060544812-6b45742d762f?w=300" alt="product">
     </div>
     <div class="product-details">
       <div class="product-title">جراب حماية شفاف سيليكون أنيق</div>
@@ -370,7 +373,6 @@ button{cursor:pointer}
     <div class="product-price">75 EGP</div>
   </div>
 
-  <!-- Added Products -->
   <div class="product-card">
     <div class="product-img-box">
       <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300" alt="product">
@@ -382,9 +384,10 @@ button{cursor:pointer}
     <div class="product-price">120 EGP</div>
   </div>
 
+  <!-- منتج الـ 150 EGP تم إصلاح وتحديث الصورة لتكون سليمة -->
   <div class="product-card">
     <div class="product-img-box">
-      <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf80?w=300" alt="product">
+      <img src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=300" alt="product">
     </div>
     <div class="product-details">
       <div class="product-title">ساعة يد رجالية كلاسيكية فاخرة</div>
@@ -417,7 +420,6 @@ button{cursor:pointer}
     </div>
   </div>
 
-  <!-- Updated 500 EGP VIP Card with professional image -->
   <div class="vip-card" id="vip-card-500" onclick="subscribeVip(500,6.6,10)">
     <img class="vip-img" src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=500" alt="vip">
     <div class="vip-body">
@@ -496,8 +498,8 @@ button{cursor:pointer}
 </div>
 </div>
 
-<!-- NAV -->
-<div class="navbar">
+<!-- NAV BAR (مخفي ولا يظهر إلا بعد تسجيل الدخول) -->
+<div class="navbar" id="app-navbar">
 <div class="nav-item active" onclick="switchTab('home',this)">
   🏠<span>الرئيسية</span>
 </div>
@@ -688,8 +690,11 @@ window.addEventListener("DOMContentLoaded",()=>{
 });
 
 function initAppSession(phone){
+  // إخفاء واجهة الدخول وإظهار التطبيق والنافبار السفلي
   document.getElementById("view-auth").style.display="none";
   document.getElementById("app-content").style.display="block";
+  document.getElementById("app-navbar").classList.add("active");
+
   document.getElementById("user-phone-disp").innerText=phone;
   document.getElementById("prof-phone-disp").innerText=phone;
   document.getElementById("ref-link").innerText=location.origin+location.pathname+"?ref="+phone;

@@ -21,10 +21,10 @@ button{cursor:pointer}
 .view{display:none}
 .view.active{display:block}
 
-/* Authentication Layout */
+/* Authentication Layout & Navigation Router */
 .auth-wrapper{min-height:100vh;background:var(--bg);display:flex;flex-direction:column;justify-content:center}
 .auth-hero{
-  padding:30px 20px;
+  padding:25px 20px 15px;
   display:flex;
   flex-direction:column;
   align-items:center;
@@ -32,13 +32,28 @@ button{cursor:pointer}
   background:radial-gradient(circle at 50% 30%,rgba(0,230,118,0.12),transparent 60%),var(--bg);
 }
 .brand-logo-box{
-  width:85px;height:85px;border-radius:20px;overflow:hidden;margin-bottom:15px;
+  width:80px;height:80px;border-radius:20px;overflow:hidden;margin-bottom:12px;
   box-shadow:0 8px 25px rgba(0,230,118,0.2);border:1px solid var(--border);
 }
 .brand-logo-box img{width:100%;height:100%;object-fit:cover}
 .auth-title{font-size:1.3rem;font-weight:bold;margin-bottom:6px;letter-spacing:0.5px}
 .auth-subtitle{color:var(--sub);font-size:0.85rem}
-.auth-form-container{padding:0 24px 30px}
+
+/* Router Tabs for Switch Mode */
+.auth-router-tabs{
+  display:flex;background:#0d1117;border:1px solid var(--border);
+  border-radius:14px;padding:4px;margin:15px 24px 0;gap:4px;
+}
+.auth-tab-btn{
+  flex:1;padding:10px;text-align:center;border-radius:10px;font-size:0.85rem;
+  font-weight:600;color:var(--sub);transition:0.3s;cursor:pointer;
+}
+.auth-tab-btn.active{
+  background:var(--card);color:var(--green);border:1px solid rgba(0,230,118,0.3);
+  box-shadow:0 4px 12px rgba(0,0,0,0.3);
+}
+
+.auth-form-container{padding:20px 24px 30px}
 .custom-input-group{position:relative;margin-bottom:16px}
 .custom-input-group input{
   width:100%;height:52px;background:#0d1117;color:#fff;
@@ -55,8 +70,6 @@ button{cursor:pointer}
   box-shadow:0 6px 20px rgba(0,230,118,0.3);transition:0.3s;
 }
 .btn-neon-pill:active{transform:scale(0.98)}
-.auth-switch-text{text-align:center;margin-top:22px;color:var(--sub);font-size:0.85rem}
-.auth-switch-text span{color:var(--green);cursor:pointer;font-weight:600}
 
 /* App Layout */
 .app-header{text-align:center;font-weight:bold;font-size:1.2rem;padding:16px;letter-spacing:1px;color:#f8fafc}
@@ -252,7 +265,7 @@ button{cursor:pointer}
 
 <body>
 
-<!-- AUTH VIEW -->
+<!-- AUTH VIEW (واجهة التسجيل مع الـ Router Tabs) -->
 <div id="view-auth" class="view active">
   <div class="auth-wrapper">
     <div class="auth-hero">
@@ -261,8 +274,14 @@ button{cursor:pointer}
       </div>
       <div class="auth-title">CENTRO COMERCIAL</div>
       <div class="auth-subtitle" id="auth-hero-title">
-        تسجيل الدخول برقم الهاتف
+        مرحباً بك في المنصة
       </div>
+    </div>
+
+    <!-- أزرار اختيار المسار (Login / Signup Router Tabs) -->
+    <div class="auth-router-tabs">
+      <div class="auth-tab-btn active" id="tab-btn-login" onclick="navigateToAuthMode('login')">تسجيل الدخول</div>
+      <div class="auth-tab-btn" id="tab-btn-signup" onclick="navigateToAuthMode('signup')">إنشاء حساب</div>
     </div>
 
     <div class="auth-form-container">
@@ -282,12 +301,6 @@ button{cursor:pointer}
         <button id="auth-btn" class="btn-neon-pill">
           تسجيل الدخول
         </button>
-
-        <div class="auth-switch-text">
-          <span id="auth-toggle-link" onclick="toggleAuthMode()">
-            ليس لديك حساب؟ إنشاء حساب جديد
-          </span>
-        </div>
       </form>
     </div>
   </div>
@@ -594,13 +607,32 @@ let currentUserData=null;
 let hasActiveSubscription=null;
 let taskRunning=false;
 
-window.toggleAuthMode=function(){
-  isSignupMode=!isSignupMode;
-  document.getElementById("auth-hero-title").innerText=isSignupMode?"إنشاء حساب جديد برقم الهاتف":"تسجيل الدخول برقم الهاتف";
-  document.getElementById("auth-btn").innerText=isSignupMode?"تسجيل حساب جديد":"تسجيل الدخول";
-  document.getElementById("auth-toggle-link").innerText=isSignupMode?"لديك حساب بالفعل؟ سجل الدخول":"ليس لديك حساب؟ إنشاء حساب جديد";
-  document.getElementById("group-confirm-pass").style.display=isSignupMode?"block":"none";
-};
+/* NAVIGATION ROUTER (التحكم في مسارات الدخول والتسجيل) */
+function handleAuthRouting(){
+  const hash = window.location.hash;
+  if(hash === "#signup"){
+    setAuthMode(true);
+  } else {
+    setAuthMode(false);
+  }
+}
+
+window.navigateToAuthMode = function(mode){
+  window.location.hash = (mode === 'signup') ? '#signup' : '#login';
+}
+
+function setAuthMode(signup){
+  isSignupMode = signup;
+  
+  document.getElementById("tab-btn-login").classList.toggle("active", !signup);
+  document.getElementById("tab-btn-signup").classList.toggle("active", signup);
+
+  document.getElementById("auth-hero-title").innerText = signup ? "إنشاء حساب جديد برقم الهاتف" : "تسجيل الدخول إلى حسابك";
+  document.getElementById("auth-btn").innerText = signup ? "تسجيل حساب جديد" : "تسجيل الدخول";
+  document.getElementById("group-confirm-pass").style.display = signup ? "block" : "none";
+}
+
+window.addEventListener("hashchange", handleAuthRouting);
 
 window.handleAuth=async function(e){
   e.preventDefault();
@@ -703,6 +735,7 @@ async function fetchUserData(phone){
 }
 
 window.addEventListener("DOMContentLoaded",()=>{
+  handleAuthRouting();
   const phone=localStorage.getItem("centro_user");
   if(phone)fetchUserData(phone);
 });
@@ -939,6 +972,7 @@ async function loadOrders(){
 
 window.logout=function(){
   localStorage.removeItem("centro_user");
+  window.location.hash = "#login";
   location.reload();
 };
 

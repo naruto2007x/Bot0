@@ -16,7 +16,7 @@
 }
 
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif}
-body{background:var(--bg);color:#fff;padding-bottom:80px}
+body{background:var(--bg);color:#fff;padding-bottom:90px}
 button{cursor:pointer}
 .view{display:none}
 .view.active{display:block}
@@ -206,20 +206,36 @@ button{cursor:pointer}
   border:1px solid rgba(0,230,118,0.2);
 }
 
+/* Professional Modern Navbar */
 .navbar{
-  position:fixed;bottom:0;left:0;right:0;height:65px;
-  background:rgba(12, 17, 26, 0.95);backdrop-filter:blur(10px);display:flex;
+  position:fixed;bottom:15px;left:15px;right:15px;height:70px;
+  background:rgba(15, 22, 35, 0.85);backdrop-filter:blur(16px);display:flex;
   justify-content:space-around;align-items:center;
-  border-top:1px solid var(--border);z-index:1000;display:none;
+  border:1px solid rgba(255, 255, 255, 0.08);border-radius:20px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.5);z-index:1000;display:none;
 }
 .navbar.active{display:flex}
 
 .nav-item{
-  display:flex;flex-direction:column;align-items:center;
-  color:var(--sub);font-size:0.72rem;gap:4px;flex:1;cursor:pointer;transition:0.2s;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  color:var(--sub);font-size:0.7rem;gap:4px;flex:1;cursor:pointer;transition:0.3s;
+  height:100%;position:relative;
 }
+.nav-item svg {
+  width:22px;height:22px;stroke:var(--sub);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;
+  transition:0.3s;
+}
+.nav-item span:last-child{font-weight:500;letter-spacing:0.3px}
+
 .nav-item.active{color:var(--green)}
-.nav-item span:last-child{font-weight:500}
+.nav-item.active svg{
+  stroke:var(--green);
+  filter:drop-shadow(0 0 8px rgba(0,230,118,0.5));
+  transform:translateY(-2px);
+}
+.nav-item.active::after{
+  content:'';position:absolute;bottom:6px;width:5px;height:5px;background:var(--green);border-radius:50%;box-shadow:0 0 8px var(--green);
+}
 
 .modal{
   display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);
@@ -495,23 +511,28 @@ button{cursor:pointer}
 </div>
 </div>
 
-<!-- NAV BAR -->
+<!-- PROFESSIONAL SVG NAVBAR -->
 <div class="navbar" id="app-navbar">
-<div class="nav-item active" onclick="switchTab('home',this)">
-  🏠<span>الرئيسية</span>
-</div>
-<div class="nav-item" onclick="switchTab('task',this)">
-  ⭐<span>مهمة</span>
-</div>
-<div class="nav-item" onclick="switchTab('transactions',this)">
-  💳<span>المعاملات</span>
-</div>
-<div class="nav-item" onclick="switchTab('orders',this)">
-  📄<span>الطلبات</span>
-</div>
-<div class="nav-item" onclick="switchTab('profile',this)">
-  👤<span>حسابي</span>
-</div>
+  <div class="nav-item active" onclick="switchTab('home',this)">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+    <span>الرئيسية</span>
+  </div>
+  <div class="nav-item" onclick="switchTab('task',this)">
+    <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+    <span>مهمة</span>
+  </div>
+  <div class="nav-item" onclick="switchTab('transactions',this)">
+    <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+    <span>المعاملات</span>
+  </div>
+  <div class="nav-item" onclick="switchTab('orders',this)">
+    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+    <span>الطلبات</span>
+  </div>
+  <div class="nav-item" onclick="switchTab('profile',this)">
+    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+    <span>حسابي</span>
+  </div>
 </div>
 
 <!-- DEPOSIT MODAL -->
@@ -727,7 +748,6 @@ function updateVipCards(){
   cards.forEach(([id,price])=>{
     const el=document.getElementById(id);
     if(!el)return;
-    // يتم تعطيل الباقة فقط إذا كان رصيد المستخدم أقل من سعر الباقة (كشرط أهليات بدون خصم) أو إذا لديه باقة نشطة أخرى
     el.classList.toggle("disabled",active||balance<price);
   });
 }
@@ -755,7 +775,6 @@ window.subscribeVip=async function(amount,commission,tasksCount){
     completed:false
   };
 
-  // تم إلغاء خصم السعر من الرصيد (balance لم يتم طرح price منه)، ليفضل رصيد المستخدم كاملاً كما هو
   try{
     await window.updateDoc(window.doc(window.db,"users",currentUserData.phone),{
       activeSubscription:sub
